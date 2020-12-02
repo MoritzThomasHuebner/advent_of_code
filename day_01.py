@@ -215,5 +215,27 @@ def find_2020_3(report):
                     return expense_a * expense_b * expense_c
 
 
+import numpy as np
+
+
+def find_expense_report_recursive(report, total, K):
+    for i, expense in enumerate(report):
+        if K > 1:
+            expense_list = find_expense_report_recursive(report=report[i+1:], total=total-expense, K=K-1)
+            if expense_list is not None:
+                expense_list.append(expense)
+                return expense_list
+        elif K == 1:
+            if total in report:
+                return [total]
+    return None
+
+
+print(np.product(find_expense_report_recursive(report=expense_report, total=2020, K=2)))
+print(np.product(find_expense_report_recursive(report=expense_report, total=2020, K=3)))
+
+
 print(find_2020(report=expense_report))
 print(find_2020_3(report=expense_report))
+
+
