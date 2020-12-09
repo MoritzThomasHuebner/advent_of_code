@@ -24,13 +24,20 @@ group_answers = []
 individual_answers = []
 
 for i, line in enumerate(lines):
-    if line == '' or i == len(lines[-1]):
+    if line == '' or i == len(lines) - 1:
         group_answers.append(individual_answers)
         individual_answers = []
     else:
         individual_answers.append(line)
 
+shared_answer_lengths = []
 for group_answer in group_answers:
-    shared_answers = {}
-    for individual_answer in group_answer:
-        shared_answers = set(group_answer).intersection()
+    for i, individual_answer in enumerate(group_answer):
+        if i == 0:
+            shared_answers = set(individual_answer)
+        else:
+            shared_answers = set(shared_answers).intersection(individual_answer)
+    shared_answer_lengths.append(len(shared_answers))
+
+print(np.sum(shared_answer_lengths))
+
