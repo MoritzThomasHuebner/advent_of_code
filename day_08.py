@@ -1,8 +1,8 @@
 from collections import namedtuple
 from copy import deepcopy
 
-Operation = namedtuple('Operation', ['command', 'value'])
 
+Operation = namedtuple('Operation', ['command', 'value'])
 
 operations = []
 with open('day_08_input.txt', 'r') as f:
