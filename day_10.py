@@ -32,4 +32,5 @@ def count_combinations(adapter_joltage, joltage_adapters):
         counter += combinations[next_adapter_index]
     return counter
 
+
 print(count_combinations(adapter_joltage=data[-1], joltage_adapters=data[:-1]))
