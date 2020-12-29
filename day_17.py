@@ -74,7 +74,7 @@ def count_adjecents_part_2(x, y, z, w, grid):
     return np.sum([grid[xm][ym][zm][wm] for xm, ym, zm, wm in mask])
 
 
-def step(grid):
+def step_part_2(grid):
     new_grid = deepcopy(grid)
     xs = [i for i in range(0, len(grid))]
     coords = itertools.product(xs, xs, xs, xs)
@@ -89,5 +89,5 @@ def step(grid):
 
 
 for i in range(6):
-    expanded_data_space = step(expanded_data_space)
+    expanded_data_space = step_part_2(expanded_data_space)
     print(np.sum(expanded_data_space))
