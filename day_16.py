@@ -90,7 +90,6 @@ for column in range(len(nearby_tickets[0])):
             rule_names.append(rule_name)
     possible_associated_fields.append(rule_names)
 
-
 associations = dict()
 
 while True:
@@ -106,9 +105,10 @@ while True:
     if len(associations) == len(possible_associated_fields):
         break
 
-print(associations)
 prod = 1
 for k, v in associations.items():
     if k.startswith('departure'):
-        prod *= int(my_ticket[i])
+        print(k)
+        print(my_ticket[v])
+        prod *= int(my_ticket[v])
 print(prod)
