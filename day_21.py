@@ -21,8 +21,19 @@ class Meal(object):
         allergens = data[1].replace('contains ', '').replace(',', '').rstrip(')').split(' ')
         return cls(ingredients=ingredients, allergens=allergens)
 
+    def remove_ingredient(self, ingredient):
+        try:
+            self.ingredients.remove(ingredient)
+        except ValueError:
+            pass
+
+    def remove_multiple_ingredients(self, ingredients):
+        for i in ingredients:
+            self.remove_ingredient(i)
+
 
 meals = [Meal.from_input_line(line) for line in lines]
+
 
 all_ingredients = set()
 all_allergens = set()
@@ -39,18 +50,37 @@ for allergen in all_allergens:
     for meal in meals:
         if allergen in meal.allergens:
             possible_ingredients.append(meal.ingredients)
-            print(meal.ingredients)
     possible_ingredients = set.intersection(*[set(pa) for pa in possible_ingredients])
     ingredients_with_possible_allergens = ingredients_with_possible_allergens.union(possible_ingredients)
-
-non_allergenic_ingredients = all_ingredients.difference(ingredients_with_possible_allergens)
-
+inert_ingredients = all_ingredients.difference(ingredients_with_possible_allergens)
 
 
 counter = 0
 for meal in meals:
-    for nai in non_allergenic_ingredients:
+    for nai in inert_ingredients:
         if nai in meal.ingredients:
             counter += 1
 
 print(counter)
+print()
+
+for meal in meals:
+    meal.remove_multiple_ingredients(inert_ingredients)
+
+allergen_ingredients = dict()
+
+while len(ingredients_with_possible_allergens) > 0:
+    for allergen in all_allergens:
+        possible_ingredients = deepcopy(ingredients_with_possible_allergens)
+        for meal in meals:
+            if allergen in meal.allergens:
+                possible_ingredients = possible_ingredients.intersection(set(meal.ingredients))
+
+        if len(possible_ingredients) == 1:
+            i = list(possible_ingredients)[0]
+            allergen_ingredients[allergen] = i
+            ingredients_with_possible_allergens.remove(i)
+
+
+canonical_dangerous_ingredients = [i for _, i in sorted(zip(list(allergen_ingredients.keys()), list(allergen_ingredients.values())))]
+print(",".join(canonical_dangerous_ingredients))
