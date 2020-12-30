@@ -38,14 +38,9 @@ def evaluate_multiple(rule_numbers, message):
     counter = 0
     for i, r in enumerate(rule_numbers):
         evaluation, count = evaluate_single(r, message[counter:])
-        # for c in counter:
-        #     evaluation, count = evaluate_single(r, message[c:])
-
         if not evaluation:
             return False, counter
         else:
-            # for c in count:
-            #     counter
             counter += count
     return True, counter
 
@@ -60,6 +55,42 @@ print(sum(results))
 
 RULES["8"] = "42 | 42 8"
 RULES["11"] = "42 31 | 42 11 31"
+
+# Part 2
+
+def evaluate_single_part_2(rule_number, message):
+    rule = RULES[rule_number]
+    if rule.startswith("\""):
+        return rule[1] == message[0], 1
+    elif "|" in rule:
+        or_rule = rule.split("|")
+        first, count_first = evaluate_multiple_part_2(or_rule[0], message)
+        second, count_second = evaluate_multiple_part_2(or_rule[1], message)
+        if first and second:
+            return first, [count_first, count_second]
+        if first:
+            return first, [count_first]
+        else:
+            return second, [count_second]
+    else:
+        return evaluate_multiple_part_2(rule, message)
+
+
+def evaluate_multiple_part_2(rule_numbers, message):
+    if len(message) == 0:
+        return False, 0
+    counters = [0]
+    rule_numbers = rule_numbers.rstrip(' ').lstrip(' ').split(' ')
+    for i, r in enumerate(rule_numbers):
+        for i, c in enumerate(counters):
+            evaluation, counts = evaluate_single_part_2(r, message[c:])
+            if not evaluation:
+                return False, 0
+            elif len(counts) == 1:
+                counters[i] += counts
+    return True, counters
+
+
 
 # results = [evaluate("0", message=i) for i in messages]
 # print(sum(results))
@@ -76,11 +107,3 @@ expected = ["bbabbbbaabaabba",
             "aaaaabbaabaaaaababaa",
             "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa",
             "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"]
-# j = 0
-# for i in inputs:
-#     if evaluate("0", input=i):
-#         print(i)
-#         print(expected[j])
-#         print()
-#         j += 1
-#
