@@ -1,40 +1,55 @@
 from itertools import cycle
 import numpy as np
+from copy import deepcopy
 
-cups = list("853192647")
-reverse_sorted_labels = [str(b) for b in sorted([int(c) for c in cups])[::-1]]
 
-current_cup = cups[0]
-print(cups)
-for i in range(100):
+def shuffle(cups, n_steps=100):
 
-    cup_cycle = cycle(cups)
-    label_cycle = cycle(reverse_sorted_labels)
+    current_cup = cups[0]
+    n_cups = len(cups)
 
-    while True:
-        if current_cup == next(cup_cycle):
-            removed_cups = [next(cup_cycle) for _ in range(3)]
-            break
+    for i in range(n_steps):
 
-    cups = [c for c in cups if c not in removed_cups]
+        current_cup_index = np.where(np.array(cups) == current_cup)[0][0]
+        if current_cup_index + 4 > len(cups):
+            removed_cups = cups[current_cup_index + 1:]
+            removed_cups.extend(cups[:current_cup_index + 4 - len(cups)])
+        else:
+            removed_cups = cups[current_cup_index + 1:current_cup_index + 4]
 
-    destination_label_found = False
-    destination = int(current_cup) - 1 if not int(current_cup) - 1 == 0 else 9
+        cups = [c for c in cups if c not in removed_cups]
 
-    while True:
-        destination_label = next(label_cycle)
-        if int(destination_label) == destination:
-            while True:
-                if destination_label in cups:
-                    destination_label_found = True
-                    break
-                destination_label = next(label_cycle)
-        if destination_label_found:
-            break
-    destination_index = cups.index(destination_label)
-    cups.insert(destination_index + 1, removed_cups)
-    cups = [item for sublist in cups for item in sublist]
-    current_cup = cups[(cups.index(current_cup) + 1) % len(cups)]
-print(cups)
+        destination_label = current_cup - 1
+        while True:
+            if destination_label < 1:
+                destination_label += n_cups
+            if destination_label in cups:
+                break
+            destination_label -= 1
 
-print("".join(cups))
+        destination_index = cups.index(destination_label)
+
+        for rc in deepcopy(removed_cups)[::-1]:
+            cups.insert(destination_index + 1, rc)
+
+        current_cup = cups[(cups.index(current_cup) + 1) % len(cups)]
+        print(i)
+    return cups
+
+# Part 1
+
+# cups = [int(c) for c in list("389125467")]
+# positions = [np.where(np.array(cups) == i)[0][0] for i in range(1, 10)]
+
+cups = [int(c) for c in list("853192647")]
+cups = shuffle(cups, 100)
+result = "".join([str(c) for c in cups]).split('1')
+result = result[1] + result[0]
+print(result)
+
+
+for i in range(10, 10000001):
+    cups.append(i)
+
+# print(len(cups))
+# cups = shuffle(cups, 10)
