@@ -8,18 +8,17 @@ def loop(number, subject_number, maximum=20201227):
     return (number * subject_number) % maximum
 
 
-def find_initial_subject_number(public_key):
+def find_loop_number(public_key):
     initial_subject_number = 7
     subject_number = 1
     loop_size = 0
     while subject_number != public_key:
         loop_size += 1
         subject_number = loop(subject_number, initial_subject_number)
-    return initial_subject_number, loop_size
+    return loop_size
 
 
-initial_subject_number_card, loop_size_card = find_initial_subject_number(public_key_card)
-initial_subject_number_door, loop_size_door = find_initial_subject_number(public_key_door)
+loop_size_door = find_loop_number(public_key_door)
 
 n = 1
 for i in range(loop_size_door):
